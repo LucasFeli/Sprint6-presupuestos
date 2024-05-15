@@ -1,5 +1,6 @@
 import { createContext,useContext,useState,useEffect } from "react";
 
+
 const ShippingContext = createContext()
 
 
@@ -9,7 +10,14 @@ export const ShippingProvider = ({data,children}) => {
         data.reduce(
           (acc, item) => ({
             ...acc,
-            [item.id]: false,
+            [item.id]: {
+              checked: false,
+              subItems: item.subItems.reduce(
+                (subAcc, subItem) => ({
+                  ...subAcc,
+                  [subItem.id]: { count: 1, value: subItem.base }
+                }), {})}
+            
           }),
           {}
         )
@@ -17,15 +25,33 @@ export const ShippingProvider = ({data,children}) => {
       const [total, setTotal] = useState(0);
       useEffect(() => {
         const newTotal = data.reduce((acc, item) => {
-          return acc + (shipping[item.id] ? item.price : 0);
+          const itemTotal = shipping[item.id].checked ? item.price:0;
+          const subItemsTotal = Object.values(shipping[item.id].subItems).reduce((subAcc,subItem)=>{
+            return subAcc + (shipping[item.id].checked ? subItem.count * subItem.value : 0);
+          },0)
+         
+          return acc + itemTotal + subItemsTotal
+          
         }, 0);
         setTotal(newTotal);
       }, [shipping,data]);
 
-      const handleShipping = (id) => {
+
+
+      const handleShipping = (id,subId=null,value=null) => {
         setShipping((prev) => ({
           ...prev,
-          [id]: !prev[id],
+          [id]: subId?{
+            ...prev[id],
+            subItems:{
+              ...prev[id].subItems,
+              [subId]:{
+                ...prev[id].subItems[subId],
+                count: value !== null ? value :
+                prev[id].subItems[subId].count + 1
+              }
+            }
+          } : {...prev[id], checked: !prev[id].checked}
         }));
       
       }

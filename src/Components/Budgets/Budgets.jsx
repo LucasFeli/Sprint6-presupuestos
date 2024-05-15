@@ -2,6 +2,7 @@ import { data } from "../../data/data";
 import {useShipping } from "../../context/ShippingContext";
 
 
+
 export const Budgets = () => {
   const { shipping, total, handleShipping } = useShipping();
   return (
@@ -18,7 +19,7 @@ export const Budgets = () => {
               <th>
                 <input
                   type="checkbox"
-                  checked={shipping[courses.id]}
+                  checked={shipping[courses.id].checked}
                   className="checkbox"
                   name={courses.course}
                   value={courses.price}
@@ -32,6 +33,18 @@ export const Budgets = () => {
               <td>{courses.description}</td>
             </tr>
           </table>
+          
+          {shipping[courses.id].checked && courses.subItems.map(subItem =>(
+              <div key={subItem.id} className="flex items-center">
+                <label className="block text-sm font-medium mr-2">
+                  {subItem.label}
+                  <input type="number"
+                  value = {shipping[courses.id].subItems[subItem.id].count}
+                  onChange={ e => handleShipping(courses.id,subItem.id, Number(e.target.value))}
+                  />
+                </label>
+              </div>
+          ))}
         </div>
       ))}
       <h2 className="text-2xl"> <strong>Preu pressuposat</strong></h2>

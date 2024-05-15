@@ -53,10 +53,18 @@ export const ShippingProvider = ({data,children}) => {
             }
           } : {...prev[id], checked: !prev[id].checked}
         }));
+
+       
       
       }
+      const incrementCount = (id, subId) =>
+        handleShipping(id, subId, shipping[id].subItems[subId].count + 1);
+      const decrementCount = (id, subId) => {
+        const currentCount = shipping[id].subItems[subId].count;
+        if (currentCount > 0) handleShipping(id, subId, currentCount - 1);
+      };
       return (
-        <ShippingContext.Provider value={{ shipping, total, handleShipping }}>
+        <ShippingContext.Provider value={{ shipping, total, handleShipping,incrementCount,decrementCount}}>
         {children}
       </ShippingContext.Provider>
   )

@@ -1,6 +1,6 @@
 import { Budgets } from "./Components/Budgets/Budgets"
-import { Navbar } from "./Components/Navbar/Navbar"
-import { Section } from "./Components/Section/Section"
+import { IntroPage } from "./views/IntroPage"
+import { Route, Routes } from "react-router-dom"
 
 
 function App() {
@@ -8,9 +8,11 @@ function App() {
 
   return (
     <>
-      <Navbar/>
-      <Section/>
-      <Budgets/>
+      <Routes>
+        <Route path="/" element={<IntroPage/>} />
+        <Route path="/budgets" element={<Budgets/>} />
+      </Routes>
+      
       
     </>
   )
